@@ -11,6 +11,7 @@ import {
   simpleReloader,
 } from "rollup-plugin-chrome-extension";
 import { emptyDir } from "rollup-plugin-empty-dir";
+import url from '@rollup/plugin-url';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -22,7 +23,7 @@ export default {
   },
   plugins: [
     // always put chromeExtension() before other plugins
-    chromeExtension(),
+    chromeExtension({ browserPolyfill: true }),
     simpleReloader(),
     svelte({
       preprocess: sveltePreprocess(),
@@ -41,6 +42,7 @@ export default {
     typescript({ sourceMap: false }),
     // Empties the output dir before a new build
     emptyDir(),
+    url({ limit: 0, fileName: 'assets/[name][extname]', publicPath: '/' }),
     // If we're building for production, minify
     production && terser(),
     // Outputs a zip file in ./releases
