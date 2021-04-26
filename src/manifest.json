@@ -1,0 +1,35 @@
+{
+  "background": {
+    "scripts": [
+      "background/index.ts"
+    ]
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "content/index.ts"
+      ],
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ]
+    }
+  ],
+  "page_action": {
+    "default_popup": "popup/index.html",
+    "browser_style": true,
+    "default_icon": {
+        "19": "icon/19.png",
+        "38": "icon/38.png",
+        "128": "icon/128.png"
+    },
+    "default_title": "Data Protection Control"
+  },
+  "permissions": [
+    "notifications",
+    "storage",
+    "tabs",
+    "webRequest",
+    "<all_urls>"
+  ]
+}
