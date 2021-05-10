@@ -12,7 +12,8 @@
       "matches": [
         "https://*/*",
         "http://*/*"
-      ]
+      ],
+      "run_at": "document_start"
     }
   ],
   "page_action": {

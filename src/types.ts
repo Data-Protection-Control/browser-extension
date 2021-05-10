@@ -14,3 +14,9 @@ export interface ConsentRequestsResource {
 export interface ConsentResponses {
   [requestId: string]: boolean | undefined,
 }
+
+export interface AdpcDecisions {
+  consent?: string[],
+  withdraw?: string[],
+  object?: string[],
+}
