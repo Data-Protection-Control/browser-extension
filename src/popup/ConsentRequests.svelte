@@ -1,23 +1,25 @@
 <script lang="ts">
   import type { Writable } from "svelte/store";
-  import type { ConsentRequestsList, ConsentResponses } from "../types";
+  import type { StorageData } from "../common/consent-request-management";
 
-  export let consentRequestsList: Writable<ConsentRequestsList>;
-  export let consentResponses: Writable<ConsentResponses>;
+  export let storageData: Writable<StorageData>;
 
   let thisElement: Element;
 
-  const acceptAll = () => {
+  function getAllCheckboxes(): HTMLInputElement[] {
     const checkboxes = [...thisElement.querySelectorAll('input[type=checkbox]')];
-    checkboxes.forEach((element: HTMLInputElement) => {
+    return checkboxes as HTMLInputElement[];
+  }
+
+  const acceptAll = () => {
+    getAllCheckboxes().forEach((element: HTMLInputElement) => {
       if (!element.checked) element.click();
     })
     // close();
   };
 
   const rejectAll = () => {
-    const checkboxes = [...thisElement.querySelectorAll('input[type=checkbox]')];
-    checkboxes.forEach((element: HTMLInputElement) => {
+    getAllCheckboxes().forEach((element: HTMLInputElement) => {
       if (element.checked) element.click();
     })
     // close();
@@ -43,13 +45,13 @@
   </section>
   <section style="max-height: 60em; overflow-y: auto;">
     <ul>
-      {#each Object.entries($consentRequestsList) as [requestId, requestText] (requestId)}
+      {#each Object.entries($storageData.consentRequestsList) as [requestId, requestText] (requestId)}
         <li class="p-4" title={requestId}>
           <label style="display: block;">
             <input
               type="checkbox"
               style="transform: scale(1.5); margin-right: 0.2em;"
-              bind:checked={$consentResponses[requestId]}
+              bind:checked={$storageData.consentResponses[requestId]}
             />
             <q>{requestText}</q>
           </label>

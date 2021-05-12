@@ -1,44 +1,43 @@
-import type { ConsentResponses } from "../types";
+import type { UserDecisionsObject } from "../types";
+import { storageDataToUserDecisions, StorageData, makeStorageData } from "../common/consent-request-management";
 
-// Because browser storage is asynchronous, but (except in Firefox) we need
-// the responses synchronously when adding the ADPC header, we keep a copy
-// of the relevant values in memory.
-let consentResponsesCache: { [key: string]: ConsentResponses } = {};
-
-async function refreshConsentResponsesCache() {
-  const completeStorageContents = await browser.storage.sync.get();
-  consentResponsesCache = filterByKey(completeStorageContents, key => key.endsWith('#responses'));
+// Because browser storage is asynchronous, but (except in Firefox) we need the
+// responses synchronously when adding the ADPC header, we keep a copy in memory.
+let browserExtensionStorageCache: { [key: string]: StorageData | undefined } = {};
+async function refreshStorageCache() {
+  browserExtensionStorageCache = await browser.storage.sync.get();
 }
+refreshStorageCache();
+// On any database change, do a complete refresh (for simplicity).
+browser.storage.onChanged.addListener(refreshStorageCache);
 
-function onStorageChanged(
-  changes: { [key: string]: browser.storage.StorageChange },
-  areaName: string
-) {
-  if (areaName === 'sync') {
-    refreshConsentResponsesCache(); // Just do a complete refresh to avoid the risk of mistakes.
-    // const responseChanges = Object.entries(changes)
-    //   .filter(([key, _]) => key.endsWith('#responses'))
-    //   .map(([key, storageChange]) => [key, storageChange.newValue])
-    // Object.assign(consentResponsesCache, Object.fromEntries(responseChanges));
+function userDecisionsToAdpcHeaderValues(userDecisions: UserDecisionsObject): string[] {
+  const adpcHeaderValues: string[] = [];
+  if (userDecisions.consent) {
+    const headerValue = `consent="${userDecisions.consent.join(' ')}"`;
+    adpcHeaderValues.push(headerValue);
   }
-  // console.log(JSON.stringify(consentResponsesCache, null, 2));
-}
-
-refreshConsentResponsesCache();
-browser.storage.onChanged.addListener(onStorageChanged);
-
-function responsesToAdpcHeaderValue(consentResponses: ConsentResponses): string {
-  const requestIdentifiersGivenConsent = Object.entries(consentResponses).filter(
-    ([_requestIdentifier, isGivenConsent]) => (isGivenConsent === true)
-  ).map(([requestIdentifier, _isGivenConsent]) => requestIdentifier);
-  const AdpcHeaderValue = `consent="${requestIdentifiersGivenConsent.join(' ')}"`;
-  return AdpcHeaderValue;
+  if (userDecisions.withdraw) {
+    const headerValue = `withdraw="${userDecisions.withdraw.join(' ')}"`;
+    adpcHeaderValues.push(headerValue);
+  }
+  if (userDecisions.object) {
+    const headerValue = `object="${userDecisions.object.join(' ')}"`;
+    adpcHeaderValues.push(headerValue);
+  }
+  return adpcHeaderValues;
 }
 
 function getAdpcHeaderValueForUrl(url: string): string {
   const origin = new URL(url).origin;
-  const consentResponses = consentResponsesCache[`${origin}#responses`];
-  return responsesToAdpcHeaderValue(consentResponses);
+
+  // const userDecisions = await getUserDecisions(origin);
+  const key = `data:${origin}`;
+  const storageData = makeStorageData(browserExtensionStorageCache[key]);
+  const userDecisions = storageDataToUserDecisions(storageData);
+
+  const headerValues = userDecisionsToAdpcHeaderValues(userDecisions);
+  return headerValues.join(', ');
 }
 
 function onBeforeSendHeaders({
@@ -49,13 +48,13 @@ function onBeforeSendHeaders({
   requestHeaders: browser.webRequest.HttpHeaders,
   tabId: number,
   url: string,
-}): browser.webRequest.BlockingResponse {
+}): browser.webRequest.BlockingResponse | void {
   if (tabId <= 0) return;
   try {
-    const AdpcHeaderValue = getAdpcHeaderValueForUrl(url);
-    if (AdpcHeaderValue) {
-      console.log('Sending ADPC header:', AdpcHeaderValue);
-      requestHeaders.push({ name: 'ADPC', value: AdpcHeaderValue });
+    const adpcHeaderValue = getAdpcHeaderValueForUrl(url);
+    if (adpcHeaderValue) {
+      console.log('Sending ADPC header:', adpcHeaderValue);
+      requestHeaders.push({ name: 'ADPC', value: adpcHeaderValue });
     }
     return { requestHeaders };
   } catch (error) {
@@ -71,10 +70,5 @@ browser.webRequest.onBeforeSendHeaders.addListener(
   },
   ['blocking', 'requestHeaders'],
 );
-
-function filterByKey<T extends Object>(obj: T, predicate: (key: string) => boolean): Partial<T> {
-  const filtered = Object.entries(obj).filter(([key, _]) => predicate(key));
-  return Object.fromEntries(filtered) as Partial<T>;
-}
 
 export {}

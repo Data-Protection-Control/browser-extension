@@ -16,8 +16,8 @@ interface BrowserStorageOnChangedUpdate {
 
 type StorageAreaName = 'sync' | 'local' | 'managed';
 
-const allStorageUpdates = readable<BrowserStorageOnChangedUpdate>(
-  null,
+const allStorageUpdates = readable<BrowserStorageOnChangedUpdate | undefined>(
+  undefined,
   function onFirstSubscribe(set) {
     debug('root storage subscribe');
     function onChanged(
@@ -40,13 +40,22 @@ const storageUpdatesPerArea: {
   local: Readable<BrowserStorageChanges>,
   managed: Readable<BrowserStorageChanges>,
 } = {
-  sync: derived(allStorageUpdates, (update, set) => {
+  sync: derived(allStorageUpdates, (
+    update: BrowserStorageOnChangedUpdate | undefined,
+    set: (value: BrowserStorageChanges) => void,
+  ) => {
     if (update?.areaName === 'sync') set(update.changes);
   }),
-  local: derived(allStorageUpdates, (update, set) => {
+  local: derived(allStorageUpdates, (
+    update: BrowserStorageOnChangedUpdate | undefined,
+    set: (value: BrowserStorageChanges) => void,
+  ) => {
     if (update?.areaName === 'local') set(update.changes);
   }),
-  managed: derived(allStorageUpdates, (update, set) => {
+  managed: derived(allStorageUpdates, (
+    update: BrowserStorageOnChangedUpdate | undefined,
+    set: (value: BrowserStorageChanges) => void,
+  ) => {
     if (update?.areaName === 'managed') set(update.changes);
   }),
 };
@@ -55,12 +64,13 @@ const storageUpdatesPerArea: {
 export function storageEntry<T>(
   storageArea: StorageAreaName,
   key: string,
-  initial: T = undefined
-): Writable<T> {
+  initial: T | undefined = undefined,
+  cast?: (storedValue: any) => T,
+): Writable<T | undefined> {
   debug('init', key, initial);
   const browserStorage = browser.storage[storageArea];
 
-  const innerStore = writable<T>(undefined, function onFirstSubscribe(set) {
+  const innerStore = writable<T | undefined>(undefined, function onFirstSubscribe(set) {
     debug('subscribe', storageArea, key);
     // Make our store update whenever the storage updates.
     const storageAreaUpdates = storageUpdatesPerArea[storageArea];
@@ -73,11 +83,12 @@ export function storageEntry<T>(
     // Get/set the initial value asap.
     browserStorage.get(key).then(result => {
       debug('get', key, result);
-      const value = result[key] as T;
-      if (value === undefined && initial !== undefined) {
-        store.set(initial);
-      } else {
+      const storedValue = result[key] as unknown;
+      const value: T = cast ? cast(storedValue) : storedValue as T;
+      if (value !== undefined) {
         set(value);
+      } else if (initial !== undefined) {
+        store.set(initial);
       }
     });
 
@@ -85,7 +96,7 @@ export function storageEntry<T>(
     return unsubscribeFromUpdates;
   });
 
-  const store: Writable<T> = {
+  const store: Writable<T | undefined> = {
     subscribe: innerStore.subscribe,
     set(value: T) {
       debug('set', key, value);

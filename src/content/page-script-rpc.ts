@@ -60,27 +60,31 @@ export function exposeToPage(functions: ListOfFunctions) {
         inResponseToNonce,
         rpcErrorMessage: `No such function registered for RPC: ${funcName}`,
       });
-    }
+    } else {
+      // Run the function
+      let returnValue: any;
+      try {
+        returnValue = await func(...args);
+      } catch (error) {
+        sendResponse({
+          inResponseToNonce,
+          errorMessage: error.message,
+        });
+      }
 
-    // Run the function
-    let returnValue: any;
-    try {
-      returnValue = await func(...args);
-    } catch (error) {
+      // Return its result to the calling side
       sendResponse({
         inResponseToNonce,
-        errorMessage: error.message,
+        returnValue,
       });
     }
-
-    // Return its result to the calling side
-    sendResponse({
-      inResponseToNonce,
-      returnValue,
-    });
   }
 
-  document.addEventListener(rpcInvocationEventName, rpcInvocationEventListener);
+  document.addEventListener(rpcInvocationEventName,
+    (event) => {
+      rpcInvocationEventListener(event as CustomEvent<RpcInvocationMessage>);
+    }
+  );
 
   // Compose a script to add to the page
   const pageScriptParts = [];
