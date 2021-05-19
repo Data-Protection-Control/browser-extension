@@ -1,6 +1,10 @@
+// @ts-ignore
+import { remoteFunction } from 'webextension-rpc';
 import { exposeToPage } from './page-script-rpc';
 import type { ConsentRequestsList, UserDecisionsObject } from '../types';
 import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
+
+const requestConsent = remoteFunction('requestConsent');
 
 exposeToPage({
   'navigator.dataProtectionControl.request': request,
@@ -10,7 +14,7 @@ async function request(consentRequestsList: ConsentRequestsList): Promise<UserDe
   const webPageOrigin = new URL(document.URL).origin;
   await updateConsentRequestsObject(webPageOrigin, consentRequestsList);
 
-  // TODO Present the consent requests.
+  await requestConsent({ consentRequestsList, pageUrl: document.URL });
 
   const userDecisions = await getUserDecisions(webPageOrigin);
   return userDecisions;

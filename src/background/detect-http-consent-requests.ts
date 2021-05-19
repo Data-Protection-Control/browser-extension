@@ -1,11 +1,6 @@
-// @ts-ignore
-import iconFile from '../icon/icon.png';
-// @ts-ignore
-import iconDisabledFile from '../icon/disabled-16.png';
-// @ts-ignore
-import iconEnabledFile from '../icon/enabled-16.png';
 import type { ConsentRequestsResource } from '../types';
-import { updateConsentRequestsObject } from '../common/consent-request-management';
+import { requestConsent, disablePageActionButton } from './user-interaction';
+import { delay } from '../common/utils';
 
 type OnWebRequestCompletedDetails =
   & browser.webRequest._OnCompletedDetails
@@ -24,57 +19,7 @@ async function handlePageWithConsentRequestsResource({
   const json = await response.text();
   const resourceObj = JSON.parse(json) as ConsentRequestsResource;
   const consentRequestsList = resourceObj.consentRequests;
-
-  const webPageOrigin = new URL(pageUrl).origin;
-  await updateConsentRequestsObject(webPageOrigin, consentRequestsList);
-
-  // for (const [identifier, consentString] of Object.entries(consentRequestsList)) {
-  //   console.log(identifier, consentString);
-  // }
-
-  const notify = false;
-  if (notify) {
-    const consentTexts = Object.values(consentRequestsList).map(t => `\n · ${t}`).join();
-    browser.notifications.create(`${tabId}`, {
-      type: 'basic',
-      title: 'Consent requested',
-      message: `The website asks your consent:
-      ${consentTexts}
-      `,
-      buttons: [{ title: 'Cool' }, { title: 'Whatever' }],
-      iconUrl: iconFile,
-    });
-  }
-
-  // Wait a moment before changing the button to avoid the browser overriding it again (Chromium bug?).
-  await delay(100, () => enablePageActionButton(tabId));
-}
-
-async function enablePageActionButton(tabId: number) {
-  showPageActionButton(tabId);
-  browser.pageAction.setTitle({
-    tabId,
-    title: "This page would like to ask your consent. Click here to answer."
-  });
-  await browser.pageAction.setIcon({ tabId, path: iconEnabledFile });
-}
-
-async function disablePageActionButton(tabId: number) {
-  showPageActionButton(tabId);
-  browser.pageAction.setTitle({
-    tabId,
-    title: "No consent is requested by this website."
-  });
-  await browser.pageAction.setIcon({ tabId, path: iconDisabledFile });
-}
-
-async function showPageActionButton(tabId: number) {
-  await browser.pageAction.show(tabId);
-
-  // Add the tabId to the popup’s URL, so it knows which page it is talking about.
-  const popupUrl = new URL(await browser.pageAction.getPopup({ tabId }));
-  popupUrl.searchParams.set('tabId', `${tabId}`);
-  browser.pageAction.setPopup({ popup: popupUrl.href, tabId });
+  await requestConsent({ consentRequestsList, tabId, pageUrl });
 }
 
 async function processReceivedHeaders({ responseHeaders, url, tabId }:
@@ -120,18 +65,5 @@ browser.webRequest.onCompleted.addListener(
   },
   ['responseHeaders'],
 );
-
-function delay<T>(ms: number, callback: () => T | Promise<T>): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    setTimeout(async () => {
-      try {
-        const value = await callback();
-        resolve(value);
-      } catch (error) {
-        reject(error);
-      }
-    }, ms);
-  });
-}
 
 export {}
