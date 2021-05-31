@@ -3,6 +3,7 @@ import { remoteFunction } from 'webextension-rpc';
 import { exposeToPage } from './page-script-rpc';
 import type { ConsentRequestsList, UserDecisionsObject } from '../types';
 import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
+import { validateConsentRequestsList } from '../common/type-validation';
 
 const requestConsent = remoteFunction('requestConsent');
 
@@ -11,6 +12,8 @@ exposeToPage({
 });
 
 async function request(consentRequestsList: ConsentRequestsList): Promise<UserDecisionsObject> {
+  validateConsentRequestsList(consentRequestsList);
+
   const webPageOrigin = new URL(document.URL).origin;
   await updateConsentRequestsObject(webPageOrigin, consentRequestsList);
 

@@ -1,6 +1,7 @@
 import type { ConsentRequestsResource } from '../types';
 import { requestConsent, disablePageActionButton } from './user-interaction';
 import { delay } from '../common/utils';
+import { validateConsentRequestsResource } from '../common/type-validation';
 
 type OnWebRequestCompletedDetails =
   & browser.webRequest._OnCompletedDetails
@@ -18,6 +19,7 @@ async function handlePageWithConsentRequestsResource({
   const response = await fetch(resourceUrl);
   const json = await response.text();
   const resourceObj = JSON.parse(json) as ConsentRequestsResource;
+  validateConsentRequestsResource(resourceObj);
   const consentRequestsList = resourceObj.consentRequests;
   await requestConsent({ consentRequestsList, tabId, pageUrl });
 }
