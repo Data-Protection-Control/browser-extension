@@ -45,13 +45,19 @@ export function storageDataToUserDecisions(storageData: StorageData): UserDecisi
   const userDecisions: UserDecisionsObject = {};
 
   if (storageData.consentResponses) {
+    // Get the identifiers of requests that were consented to, and are still applicable.
     const consent = Object.entries(storageData.consentResponses)
       .filter(
-        ([_requestIdentifier, isGivenConsent]) => (isGivenConsent === true)
+        ([requestIdentifier, isGivenConsent]) => (
+          isGivenConsent === true &&
+          storageData.consentRequestsList.some(
+            consentRequest => consentRequest.id === requestIdentifier
+          )
+        )
       ).map(
         ([requestIdentifier, _isGivenConsent]) => requestIdentifier
       );
-    if (consent) userDecisions.consent = consent;
+    if (consent.length > 0) userDecisions.consent = consent;
   }
 
   return userDecisions;
