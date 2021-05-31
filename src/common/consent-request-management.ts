@@ -56,3 +56,21 @@ export function storageDataToUserDecisions(storageData: StorageData): UserDecisi
 
   return userDecisions;
 }
+
+export function listenToStorageChanges(
+  callback: (webPageOrigin: string, newValue: StorageData, oldValue: StorageData) => void,
+) {
+  browser.storage.onChanged.addListener(
+    (changes, areaName) => {
+      if (areaName !== 'sync') return;
+
+      Object.entries(changes).forEach(([key, change]) => {
+        if (!key.startsWith('data:')) return;
+        const webPageOrigin = key.slice('data:'.length);
+        const newStorageData = makeStorageData(change.newValue);
+        const oldStorageData = makeStorageData(change.oldValue);
+        callback(webPageOrigin, newStorageData, oldStorageData);
+      });
+    }
+  );
+}

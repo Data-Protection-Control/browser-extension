@@ -4,6 +4,7 @@ import { exposeToPage } from './page-script-rpc';
 import type { ConsentRequestsList, UserDecisionsObject } from '../types';
 import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
 import { validateConsentRequestsList } from '../common/type-validation';
+import './events';
 
 const requestConsent = remoteFunction('requestConsent');
 

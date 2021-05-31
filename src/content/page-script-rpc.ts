@@ -15,6 +15,8 @@
  *     })
  */
 
+import { executePageScript } from "./execute-page-script";
+
 interface RpcInvocationMessage {
   funcName: string;
   args: any[];
@@ -148,8 +150,5 @@ export function exposeToPage(functions: ListOfFunctions) {
   const pageScriptContent = `(function(){
     ${pageScriptParts.join('\n')}
   })();`;
-  const scriptElement = document.createElement('script');
-  scriptElement.textContent = pageScriptContent;
-  (document.head || document.documentElement).appendChild(scriptElement);
-  scriptElement.remove();
+  executePageScript(pageScriptContent);
 }
