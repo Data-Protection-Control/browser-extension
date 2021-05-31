@@ -1,8 +1,11 @@
 // Interfaces corresponding to definitions in the specification
 
-export interface ConsentRequestsList {
-  [requestId: string]: string | undefined,
+export interface ConsentRequest {
+  text: string; // request text
+  id: string; // request identifier
 }
+
+export type ConsentRequestsList = Array<ConsentRequest>;
 
 export interface ConsentRequestsResource {
   consentRequests: ConsentRequestsList,

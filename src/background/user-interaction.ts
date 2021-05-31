@@ -27,7 +27,10 @@ export async function requestConsent({
 
   const notify = false;
   if (notify) {
-    const consentTexts = Object.values(consentRequestsList).map(t => `\n · ${t}`).join();
+    const consentTexts = consentRequestsList
+      .map(request => `\n · ${request.text}`)
+      .join();
+
     browser.notifications.create(`${tabId}`, {
       type: 'basic',
       title: 'Consent requested',

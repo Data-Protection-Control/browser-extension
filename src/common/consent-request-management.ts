@@ -7,7 +7,7 @@ export interface StorageData {
 
 export function makeStorageData(partialData?: Partial<StorageData>): StorageData {
   const data = {
-    consentRequestsList: {},
+    consentRequestsList: [],
     consentResponses: {},
     ...partialData,
   };

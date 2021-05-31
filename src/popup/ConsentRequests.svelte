@@ -45,15 +45,15 @@
   </section>
   <section style="max-height: 60em; overflow-y: auto;">
     <ul>
-      {#each Object.entries($storageData.consentRequestsList) as [requestId, requestText] (requestId)}
-        <li class="p-4" title={requestId}>
+      {#each $storageData.consentRequestsList as consentRequest (consentRequest.id)}
+        <li class="p-4" title={consentRequest.id}>
           <label style="display: block;">
             <input
               type="checkbox"
               style="transform: scale(1.5); margin-right: 0.2em;"
-              bind:checked={$storageData.consentResponses[requestId]}
+              bind:checked={$storageData.consentResponses[consentRequest.id]}
             />
-            <q>{requestText}</q>
+            <q>{consentRequest.text}</q>
           </label>
         </li>
       {/each}
