@@ -70,10 +70,10 @@ export async function hidePopin(tabId: number) {
   await hidePopinRpc();
 }
 
-// Enable the pop-in to close itself by calling this background script to call
-// its tab’s content script to remove its iframe.
+// Enable the pop-in to close itself (tabId is read from the calling tab), and
+// enable the pop-up to close the pop-in (tabId is passed as parameter).
 makeRemotelyCallable({
-  hidePopin: async ({ tab }: { tab: browser.tabs.Tab }) => {
-    await hidePopin(tab.id as number);
+  hidePopin: async ({ tab }: { tab: browser.tabs.Tab }, tabId: number) => {
+    await hidePopin(tabId ?? tab.id as number);
   },
 }, { insertExtraArg: true });

@@ -1,26 +1,10 @@
 <script lang="ts">
+  // @ts-ignore
+  import icon from '../icon/38.png';
   import ConsentRequestsLoader from "./ConsentRequestsLoader.svelte";
+
   export let close: () => void;
-
-  async function getWebPageOrigin() {
-    // For popin
-    const searchParams = new URL(document.URL).searchParams;
-    const originParam = searchParams.get('origin');
-    if (originParam) return originParam;
-
-    // For popup
-    const tabIdParam = searchParams.get('tabId');
-    if (!tabIdParam) {
-      throw new Error("No tab specified");
-    }
-    const tabId = Number.parseInt(tabIdParam);
-    const tab = await browser.tabs.get(tabId);
-    const websiteOrigin = new URL(tab.url as string).origin;
-    return websiteOrigin;
-  }
-
-  const webPageOriginP = getWebPageOrigin();
-
+  export let webPageOrigin: string | undefined;
 </script>
 
 <style>
@@ -47,17 +31,11 @@
 </style>
 
 <main>
-  <img id="icon" src="/icon/38.png"/>
+  <img id="icon" src={icon} />
   <button id="close" on:click={close}>×</button>
-  {#await webPageOriginP}
-    <p>
-      Reading tab URL..
-    </p>
-  {:then webPageOrigin}
+  {#if webPageOrigin}
     <ConsentRequestsLoader webPageOrigin={webPageOrigin} />
-  {:catch error}
-    <p>
-      Error: {error.message}
-    </p>
-  {/await}
+  {:else}
+    <i>This page cannot request consent.</i>
+  {/if}
 </main>

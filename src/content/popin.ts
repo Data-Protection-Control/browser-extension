@@ -10,7 +10,7 @@ export async function showPopin() {
   container.style.boxSizing = 'content-box';
   container.style.height = '400px';
   container.style.width = '400px';
-  container.style.maxHeight = '80vh';
+  container.style.maxHeight = '95vh';
   container.style.maxWidth = 'calc(100vw - 2 * 20px)';
   container.style.position = 'absolute';
   container.style.top = '0';
@@ -23,8 +23,10 @@ export async function showPopin() {
   container.style.zIndex = '999999999';
   container.style.transition = `opacity ${fadeOutDuration}ms`;
 
-  const websiteOrigin = new URL(document.URL).origin;
-  container.src = `${popupUrl}?origin=${websiteOrigin}`;
+  const webPageOrigin = new URL(document.URL).origin;
+  const src = new URL(popupUrl);
+  src.searchParams.set('origin', webPageOrigin);
+  container.src = src.href;
 
   document.body.appendChild(container);
   container.focus();
