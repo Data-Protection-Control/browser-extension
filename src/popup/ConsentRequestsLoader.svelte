@@ -17,12 +17,10 @@
   const storageData = maybeStorageData as Writable<StorageData>;
 </script>
 
-<main class="text-lg">
-  {#if $maybeStorageData && $storageData.consentRequestsList.length > 0}
-    <ConsentRequests {...{storageData}} />
-  {:else}
-    <p>
-      This page does not include any requests for consent for personal data processing.
-    </p>
-  {/if}
-</main>
+{#if $maybeStorageData && $storageData.consentRequestsList.length > 0}
+  <ConsentRequests {...{storageData}} />
+{:else}
+  <p>
+    This page does not include any requests for consent for personal data processing.
+  </p>
+{/if}

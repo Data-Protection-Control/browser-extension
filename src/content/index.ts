@@ -5,6 +5,7 @@ import type { ConsentRequestsList, UserDecisionsObject } from '../types';
 import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
 import { validateConsentRequestsList } from '../common/type-validation';
 import './events';
+import './popin';
 
 const requestConsent = remoteFunction('requestConsent');
 
@@ -23,5 +24,3 @@ async function request(consentRequestsList: ConsentRequestsList): Promise<UserDe
   const userDecisions = await getUserDecisions(webPageOrigin);
   return userDecisions;
 }
-
-export {}

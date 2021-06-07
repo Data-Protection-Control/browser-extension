@@ -5,6 +5,7 @@ import iconDisabledFile from '../icon/disabled-16.png';
 // @ts-ignore
 import iconEnabledFile from '../icon/enabled-16.png';
 
+import { makeRemotelyCallable, remoteFunction } from 'webextension-rpc';
 import { updateConsentRequestsObject } from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
 import { delay } from '../common/utils';
@@ -28,6 +29,8 @@ export async function requestConsent({
 
   // Wait a moment before changing the button to avoid the browser overriding it again (Chromium bug?).
   await delay(100, () => enablePageActionButton(tabId));
+
+  await showPopin(tabId);
 }
 
 export async function enablePageActionButton(tabId: number) {
@@ -56,3 +59,21 @@ async function showPageActionButton(tabId: number) {
   popupUrl.searchParams.set('tabId', `${tabId}`);
   browser.pageAction.setPopup({ popup: popupUrl.href, tabId });
 }
+
+export async function showPopin(tabId: number) {
+  const showPopinRpc = remoteFunction('showPopin', { tabId });
+  await showPopinRpc();
+}
+
+export async function hidePopin(tabId: number) {
+  const hidePopinRpc = remoteFunction('hidePopin', { tabId });
+  await hidePopinRpc();
+}
+
+// Enable the pop-in to close itself by calling this background script to call
+// its tab’s content script to remove its iframe.
+makeRemotelyCallable({
+  hidePopin: async ({ tab }: { tab: browser.tabs.Tab }) => {
+    await hidePopin(tab.id as number);
+  },
+}, { insertExtraArg: true });
