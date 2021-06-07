@@ -26,9 +26,6 @@ export async function requestConsent({
     return;
   }
 
-  const notify = false;
-  if (notify) showNotification(consentRequestsList, tabId);
-
   // Wait a moment before changing the button to avoid the browser overriding it again (Chromium bug?).
   await delay(100, () => enablePageActionButton(tabId));
 }
@@ -58,27 +55,4 @@ async function showPageActionButton(tabId: number) {
   const popupUrl = new URL(await browser.pageAction.getPopup({ tabId }));
   popupUrl.searchParams.set('tabId', `${tabId}`);
   browser.pageAction.setPopup({ popup: popupUrl.href, tabId });
-}
-
-async function showNotification(
-  consentRequestsList: ConsentRequestsList,
-  tabId: number,
-) {
-  const consentTexts = consentRequestsList
-      .map(request => `\n · ${request.text}`)
-      .join();
-
-  browser.notifications.create(`${tabId}`, {
-    type: 'basic',
-    title: 'Consent requested',
-    message: `The website asks your consent:
-    ${consentTexts}
-    `,
-    buttons: [{ title: 'Cool' }, { title: 'Whatever' }],
-    iconUrl: iconFile,
-  });
-
-  // browser.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
-  //   console.log(`button ${buttonIndex} was clicked on notification ${notificationId}.`);
-  // });
 }
