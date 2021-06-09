@@ -2,7 +2,7 @@
 import { remoteFunction } from 'webextension-rpc';
 import { exposeToPage } from './page-script-rpc';
 import type { ConsentRequestsList, UserDecisionsObject } from '../types';
-import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
+import { setConsentRequestsList, getUserDecisions } from '../common/consent-request-management';
 import { validateConsentRequestsList } from '../common/type-validation';
 import type { RequestConsentParams } from '../background';
 import './events';
@@ -18,7 +18,7 @@ async function request(consentRequestsList: ConsentRequestsList): Promise<UserDe
   validateConsentRequestsList(consentRequestsList);
 
   const webPageOrigin = new URL(document.URL).origin;
-  await updateConsentRequestsObject(webPageOrigin, consentRequestsList);
+  await setConsentRequestsList(webPageOrigin, consentRequestsList);
 
   await requestConsent({ consentRequestsList, pageUrl: document.URL });
 

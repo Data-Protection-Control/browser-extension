@@ -20,7 +20,9 @@
 {#if $maybeStorageData && $storageData.consentRequestsList.length > 0}
   <ConsentRequests {...{storageData}} />
 {:else}
-  <p>
-    This page does not include any requests for consent for personal data processing.
-  </p>
+  <section class="p-2">
+    <p>
+      This page does not include any requests for consent for personal data processing.
+    </p>
+  </section>
 {/if}

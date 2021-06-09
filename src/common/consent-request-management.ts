@@ -14,13 +14,28 @@ export function makeStorageData(partialData?: Partial<StorageData>): StorageData
   return data;
 }
 
-export async function updateConsentRequestsObject(
+export async function getConsentRequestsList(webPageOrigin: string): Promise<ConsentRequestsList> {
+  const data = await getStorageDataForOrigin(webPageOrigin);
+  return data.consentRequestsList;
+}
+
+export async function setConsentRequestsList(
   webPageOrigin: string,
   consentRequestsList: ConsentRequestsList,
 ) {
   const data = await getStorageDataForOrigin(webPageOrigin);
   data.consentRequestsList = consentRequestsList;
   await setStorageDataForOrigin(webPageOrigin, data);
+}
+
+export async function hasUnansweredConsentRequests(webPageOrigin: string) {
+  const storageData = await getStorageDataForOrigin(webPageOrigin);
+  for (const consentRequest of storageData.consentRequestsList) {
+    if (storageData.consentResponses[consentRequest.id] === undefined) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export async function getStorageDataForOrigin(webPageOrigin: string): Promise<StorageData> {

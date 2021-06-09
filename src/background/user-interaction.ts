@@ -1,15 +1,14 @@
 // @ts-ignore
-import iconFile from '../icon/icon.png';
+import iconNewRequests from '../icon/red-16.png';
 // @ts-ignore
-import iconDisabledFile from '../icon/disabled-16.png';
+import iconKnownRequests from '../icon/darkred-16.png';
 // @ts-ignore
-import iconEnabledFile from '../icon/enabled-16.png';
+import iconNoRequests from '../icon/grey-16.png';
 
 // @ts-ignore
 import { makeRemotelyCallable, remoteFunction } from 'webextension-rpc';
-import { updateConsentRequestsObject } from '../common/consent-request-management';
+import { setConsentRequestsList, hasUnansweredConsentRequests } from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
-import { delay } from '../common/utils';
 
 export async function requestConsent({
   consentRequestsList,
@@ -21,35 +20,53 @@ export async function requestConsent({
   tabId: number,
 }) {
   const webPageOrigin = new URL(pageUrl).origin;
-  await updateConsentRequestsObject(webPageOrigin, consentRequestsList);
+  await setConsentRequestsList(webPageOrigin, consentRequestsList);
 
+  // No requests
   if (consentRequestsList.length === 0) {
-    await delay(100, () => disablePageActionButton(tabId));
+    await noConsentRequested(tabId);
     return;
   }
 
-  // Wait a moment before changing the button to avoid the browser overriding it again (Chromium bug?).
-  await delay(100, () => enablePageActionButton(tabId));
-
-  await showPopin(tabId);
+  if (await hasUnansweredConsentRequests(webPageOrigin)) {
+    // New requests
+    await setButtonNewRequests(tabId);
+    await showPopin(tabId);
+  } else {
+    // Known requests
+    await setButtonKnownRequests(tabId);
+  }
 }
 
-export async function enablePageActionButton(tabId: number) {
-  showPageActionButton(tabId);
+export async function noConsentRequested(tabId: number) {
+  await setButtonNoRequests(tabId);
+}
+
+async function setButtonNewRequests(tabId: number) {
+  await showPageActionButton(tabId);
   browser.pageAction.setTitle({
     tabId,
     title: "This page would like to ask your consent. Click here to answer."
   });
-  await browser.pageAction.setIcon({ tabId, path: iconEnabledFile });
+  await browser.pageAction.setIcon({ tabId, path: iconNewRequests });
 }
 
-export async function disablePageActionButton(tabId: number) {
-  showPageActionButton(tabId);
+async function setButtonKnownRequests(tabId: number) {
+  await showPageActionButton(tabId);
+  browser.pageAction.setTitle({
+    tabId,
+    title: "This page asked your consent before. Click here to review your answers."
+  });
+  await browser.pageAction.setIcon({ tabId, path: iconKnownRequests });
+}
+
+async function setButtonNoRequests(tabId: number) {
+  await showPageActionButton(tabId);
   browser.pageAction.setTitle({
     tabId,
     title: "No consent is requested by this website."
   });
-  await browser.pageAction.setIcon({ tabId, path: iconDisabledFile });
+  await browser.pageAction.setIcon({ tabId, path: iconNoRequests });
 }
 
 async function showPageActionButton(tabId: number) {
@@ -61,11 +78,11 @@ async function showPageActionButton(tabId: number) {
   browser.pageAction.setPopup({ popup: popupUrl.href, tabId });
 }
 
-export async function showPopin(tabId: number) {
+async function showPopin(tabId: number) {
   await remoteFunction('showPopin', { tabId })();
 }
 
-export async function hidePopin(tabId: number) {
+async function hidePopin(tabId: number) {
   await remoteFunction('hidePopin', { tabId })();
 }
 

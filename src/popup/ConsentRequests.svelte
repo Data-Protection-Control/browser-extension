@@ -6,23 +6,28 @@
 
   let listElement: Element;
 
-  function getAllCheckboxes(): HTMLInputElement[] {
-    const checkboxes = [...listElement.querySelectorAll('input[type=checkbox]')];
-    return checkboxes as HTMLInputElement[];
+  function getVisibleConsentRequests() {
+    return [...listElement.querySelectorAll('.consent-request-item')];
   }
 
   const acceptAll = () => {
-    getAllCheckboxes().forEach((element: HTMLInputElement) => {
-      if (!element.checked) element.click();
-    })
+    getVisibleConsentRequests().forEach((element) => {
+      $storageData.consentResponses[element.id] = true;
+    });
   };
 
   const rejectAll = () => {
-    getAllCheckboxes().forEach((element: HTMLInputElement) => {
-      if (element.checked) element.click();
-    })
+    getVisibleConsentRequests().forEach((element) => {
+      $storageData.consentResponses[element.id] = false;
+    });
   };
 </script>
+
+<style>
+  .unanswered {
+    background-color: white;
+  }
+</style>
 
 <section class="p-2">
   <p>This website asks your consent to process your personal data for the following purposes:</p>
@@ -30,8 +35,11 @@
 <section style="max-height: 200px; overflow-y: auto;">
   <ul bind:this={listElement}>
     {#each $storageData.consentRequestsList as consentRequest (consentRequest.id)}
-      <li class="px-4 py-2 my-1 bg-white">
-        <label style="display: block;">
+      <li class="consent-request-item" id={consentRequest.id}>
+        <label
+          class="block px-4 py-2 my-1"
+          class:unanswered="{$storageData.consentResponses[consentRequest.id] === undefined}"
+        >
           <input
             type="checkbox"
             style="transform: scale(1.5); margin-right: 0.2em;"
