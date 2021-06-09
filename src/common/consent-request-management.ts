@@ -28,6 +28,14 @@ export async function setConsentRequestsList(
   await setStorageDataForOrigin(webPageOrigin, data);
 }
 
+export async function clearConsentRequestsList(
+  webPageOrigin: string,
+) {
+  if (await hasStorageDataForOrigin(webPageOrigin)) {
+    setConsentRequestsList(webPageOrigin, []);
+  }
+}
+
 export async function hasUnansweredConsentRequests(webPageOrigin: string) {
   const storageData = await getStorageDataForOrigin(webPageOrigin);
   for (const consentRequest of storageData.consentRequestsList) {
@@ -46,6 +54,12 @@ export async function markConsentRequestsAsAnswered(webPageOrigin: string) {
     }
   }
   await setStorageDataForOrigin(webPageOrigin, storageData);
+}
+
+export async function hasStorageDataForOrigin(webPageOrigin: string): Promise<boolean> {
+  const key = `data:${webPageOrigin}`;
+  const storedData = (await browser.storage.sync.get(key))[key] as Partial<StorageData> | undefined;
+  return storedData !== undefined;
 }
 
 export async function getStorageDataForOrigin(webPageOrigin: string): Promise<StorageData> {

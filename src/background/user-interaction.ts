@@ -6,12 +6,13 @@ import iconKnownRequests from '../icon/darkred-16.png';
 import iconNoRequests from '../icon/grey-16.png';
 
 // @ts-ignore
-import { makeRemotelyCallable, remoteFunction } from 'webextension-rpc';
+import { remoteFunction } from 'webextension-rpc';
 import {
   setConsentRequestsList,
   hasUnansweredConsentRequests,
   getConsentRequestsList,
   listenToStorageChanges,
+  clearConsentRequestsList,
 } from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
 
@@ -32,6 +33,12 @@ export async function requestConsent({
   if (await hasUnansweredConsentRequests(webPageOrigin)) {
     await showPopin(tabId);
   }
+}
+
+export async function pageDoesNotRequestConsent(tabId: number, pageUrl: string) {
+  const webPageOrigin = new URL(pageUrl).origin;
+  await clearConsentRequestsList(pageUrl);
+  await updatePageActionButton(tabId, webPageOrigin);
 }
 
 export async function updatePageActionButton(tabId: number, webPageOrigin: string) {
@@ -103,14 +110,6 @@ async function showPopin(tabId: number) {
   await remoteFunction('showPopin', { tabId })();
 }
 
-async function hidePopin(tabId: number) {
+export async function hidePopin(tabId: number) {
   await remoteFunction('hidePopin', { tabId })();
 }
-
-// Enable the pop-in to close itself (tabId is read from the calling tab), and
-// enable the pop-up to close the pop-in (tabId is passed as parameter).
-makeRemotelyCallable({
-  hidePopin: async ({ tab }: { tab: browser.tabs.Tab }, tabId: number) => {
-    await hidePopin(tabId ?? tab.id as number);
-  },
-}, { insertExtraArg: true });

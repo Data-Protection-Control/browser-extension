@@ -1,5 +1,5 @@
 import type { ConsentRequestsResource, ConsentRequestsList } from '../types';
-import { requestConsent } from './user-interaction';
+import { requestConsent, pageDoesNotRequestConsent } from './user-interaction';
 import { validateConsentRequestsResource } from '../common/type-validation';
 import { delay } from '../common/utils';
 
@@ -25,7 +25,7 @@ async function processReceivedHeaders({ responseHeaders, url, tabId }:
   const stuffShouldHaveLoadedByNow = delay(100);
 
   // By default, a page does not ask for consent.
-  let consentRequestsList: ConsentRequestsList = [];
+  let consentRequestsList: ConsentRequestsList | undefined;
 
   // TODO follow specs properly: support multiple links in one header, context URI, base URI, etc.
   // TODO support multiple consent-requests links; check hreflang for preferred language.
@@ -42,10 +42,15 @@ async function processReceivedHeaders({ responseHeaders, url, tabId }:
     }
   }
 
-  // This site does not ask consent through HTTP.
-  // Note that it might still request consent through JS.
   await stuffShouldHaveLoadedByNow;
-  await requestConsent({ consentRequestsList, tabId, pageUrl: url });
+
+  if (consentRequestsList !== undefined) {
+    await requestConsent({ consentRequestsList, tabId, pageUrl: url });
+  } else {
+    // This site does not ask consent through HTTP.
+    // Note that it might still request consent through JS.
+    await pageDoesNotRequestConsent(tabId, url);
+  }
 }
 
 async function onWebRequestCompleted({ responseHeaders, url, tabId }: OnWebRequestCompletedDetails) {
