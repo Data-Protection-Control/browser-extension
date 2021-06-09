@@ -1,3 +1,4 @@
+// @ts-ignore
 import { makeRemotelyCallable } from 'webextension-rpc';
 
 const fadeOutDuration = 300; // ms

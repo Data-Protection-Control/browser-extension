@@ -1,5 +1,6 @@
 import Popup from "./Popup.svelte";
 import "./tailwind.css";
+// @ts-ignore
 import { remoteFunction } from 'webextension-rpc';
 
 async function main() {

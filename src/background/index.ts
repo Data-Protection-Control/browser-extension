@@ -1,3 +1,4 @@
+// @ts-ignore
 import { makeRemotelyCallable } from 'webextension-rpc';
 import './detect-http-consent-requests';
 import './send-http-adpc-header';

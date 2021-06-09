@@ -5,6 +5,7 @@ import iconDisabledFile from '../icon/disabled-16.png';
 // @ts-ignore
 import iconEnabledFile from '../icon/enabled-16.png';
 
+// @ts-ignore
 import { makeRemotelyCallable, remoteFunction } from 'webextension-rpc';
 import { updateConsentRequestsObject } from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
