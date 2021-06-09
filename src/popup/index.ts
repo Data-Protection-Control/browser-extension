@@ -2,6 +2,7 @@ import Popup from "./Popup.svelte";
 import "./tailwind.css";
 // @ts-ignore
 import { remoteFunction } from 'webextension-rpc';
+import { markConsentRequestsAsAnswered } from "../common/consent-request-management";
 
 async function main() {
   const searchParams = new URL(document.URL).searchParams;
@@ -25,7 +26,10 @@ async function main() {
       webPageOrigin = new URL(tab.url).origin;
   }
 
-  function close() {
+  async function close() {
+    // When explicitly closed, consider unchecked boxes as rejected.
+    if (webPageOrigin)
+      await markConsentRequestsAsAnswered(webPageOrigin);
     window.close(); // For pop-up
     remoteFunction('hidePopin')(); // For pop-in
   }

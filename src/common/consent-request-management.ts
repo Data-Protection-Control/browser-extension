@@ -38,6 +38,16 @@ export async function hasUnansweredConsentRequests(webPageOrigin: string) {
   return false;
 }
 
+export async function markConsentRequestsAsAnswered(webPageOrigin: string) {
+  const storageData = await getStorageDataForOrigin(webPageOrigin);
+  for (const consentRequest of storageData.consentRequestsList) {
+    if (storageData.consentResponses[consentRequest.id] === undefined) {
+      storageData.consentResponses[consentRequest.id] = false;
+    }
+  }
+  await setStorageDataForOrigin(webPageOrigin, storageData);
+}
+
 export async function getStorageDataForOrigin(webPageOrigin: string): Promise<StorageData> {
   const key = `data:${webPageOrigin}`;
   const storedData = (await browser.storage.sync.get(key))[key] as Partial<StorageData> | undefined;
