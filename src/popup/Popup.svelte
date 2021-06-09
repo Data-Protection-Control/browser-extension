@@ -1,6 +1,4 @@
 <script lang="ts">
-  // @ts-ignore
-  import icon from '../icon/38.png';
   import ConsentRequestsLoader from "./ConsentRequestsLoader.svelte";
 
   export let close: () => void;
@@ -8,11 +6,6 @@
 </script>
 
 <style>
-  img#icon {
-    margin: 8px;
-    float: left;
-  }
-
   button#close {
     float: right;
     font-size: 30px;
@@ -31,7 +24,6 @@
 </style>
 
 <main>
-  <img id="icon" src={icon} />
   <button id="close" on:click={close}>×</button>
   {#if webPageOrigin}
     <ConsentRequestsLoader webPageOrigin={webPageOrigin} />
