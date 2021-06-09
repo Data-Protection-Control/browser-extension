@@ -1,5 +1,5 @@
-import type { ConsentRequestsResource } from '../types';
-import { requestConsent, noConsentRequested } from './user-interaction';
+import type { ConsentRequestsResource, ConsentRequestsList } from '../types';
+import { requestConsent } from './user-interaction';
 import { validateConsentRequestsResource } from '../common/type-validation';
 import { delay } from '../common/utils';
 
@@ -24,6 +24,9 @@ async function processReceivedHeaders({ responseHeaders, url, tabId }:
   // Hopefully 100ms will always suffice..
   const stuffShouldHaveLoadedByNow = delay(100);
 
+  // By default, a page does not ask for consent.
+  let consentRequestsList: ConsentRequestsList = [];
+
   // TODO follow specs properly: support multiple links in one header, context URI, base URI, etc.
   // TODO support multiple consent-requests links; check hreflang for preferred language.
   const consentRequestsLink = responseHeaders.find(header =>
@@ -35,17 +38,14 @@ async function processReceivedHeaders({ responseHeaders, url, tabId }:
     if (consentRequestsLinkTarget) {
       const consentRequestsResourceUrl = new URL(consentRequestsLinkTarget, url).href;
       const consentRequestsResource = await getConsentRequestsResource(consentRequestsResourceUrl);
-      const consentRequestsList = consentRequestsResource.consentRequests;
-      await stuffShouldHaveLoadedByNow;
-      await requestConsent({ consentRequestsList, tabId, pageUrl: url });
-      return;
+      consentRequestsList = consentRequestsResource.consentRequests;
     }
   }
 
   // This site does not ask consent through HTTP.
   // Note that it might still request consent through JS.
   await stuffShouldHaveLoadedByNow;
-  await noConsentRequested(tabId);
+  await requestConsent({ consentRequestsList, tabId, pageUrl: url });
 }
 
 async function onWebRequestCompleted({ responseHeaders, url, tabId }: OnWebRequestCompletedDetails) {

@@ -7,7 +7,12 @@ import iconNoRequests from '../icon/grey-16.png';
 
 // @ts-ignore
 import { makeRemotelyCallable, remoteFunction } from 'webextension-rpc';
-import { setConsentRequestsList, hasUnansweredConsentRequests } from '../common/consent-request-management';
+import {
+  setConsentRequestsList,
+  hasUnansweredConsentRequests,
+  getConsentRequestsList,
+  listenToStorageChanges,
+} from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
 
 export async function requestConsent({
@@ -22,25 +27,41 @@ export async function requestConsent({
   const webPageOrigin = new URL(pageUrl).origin;
   await setConsentRequestsList(webPageOrigin, consentRequestsList);
 
+  await updatePageActionButton(tabId, webPageOrigin);
+
+  if (await hasUnansweredConsentRequests(webPageOrigin)) {
+    await showPopin(tabId);
+  }
+}
+
+export async function updatePageActionButton(tabId: number, webPageOrigin: string) {
+  const consentRequestsList = await getConsentRequestsList(webPageOrigin);
+
   // No requests
   if (consentRequestsList.length === 0) {
-    await noConsentRequested(tabId);
+    await setButtonNoRequests(tabId);
     return;
   }
 
+  // New requests
   if (await hasUnansweredConsentRequests(webPageOrigin)) {
-    // New requests
     await setButtonNewRequests(tabId);
-    await showPopin(tabId);
-  } else {
-    // Known requests
-    await setButtonKnownRequests(tabId);
+    return;
   }
+
+  // Known requests
+  await setButtonKnownRequests(tabId);
 }
 
-export async function noConsentRequested(tabId: number) {
-  await setButtonNoRequests(tabId);
-}
+// When the consent requests/responses change, update the page action button of relevant tabs.
+listenToStorageChanges(async (webPageOrigin) => {
+  const allTabs = await browser.tabs.query({});
+  for (const tab of allTabs) {
+    if (tab.id && tab.url && webPageOrigin === new URL(tab.url).origin) {
+      await updatePageActionButton(tab.id, webPageOrigin);
+    }
+  }
+});
 
 async function setButtonNewRequests(tabId: number) {
   await showPageActionButton(tabId);
