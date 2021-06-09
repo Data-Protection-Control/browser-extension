@@ -2,14 +2,12 @@ import { makeRemotelyCallable } from 'webextension-rpc';
 import './detect-http-consent-requests';
 import './send-http-adpc-header';
 import { requestConsent } from './user-interaction';
-import type { ConsentRequestsList } from '../types';
+
+export type RequestConsentParams = Omit<Parameters<typeof requestConsent>[0], 'tabId'>;
 
 async function requestConsentWrapper(
   { tab }: { tab: browser.tabs.Tab },
-  actualArguments: {
-    consentRequestsList: ConsentRequestsList,
-    pageUrl: string,
-  },
+  actualArguments: RequestConsentParams,
 ) {
   // Call requestConsent with the tabId it is being called from.
   if (tab.id === undefined || tab.id <= 0) { // (impossible?)

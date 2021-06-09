@@ -4,10 +4,11 @@ import { exposeToPage } from './page-script-rpc';
 import type { ConsentRequestsList, UserDecisionsObject } from '../types';
 import { updateConsentRequestsObject, getUserDecisions } from '../common/consent-request-management';
 import { validateConsentRequestsList } from '../common/type-validation';
+import type { RequestConsentParams } from '../background';
 import './events';
 import './popin';
 
-const requestConsent = remoteFunction('requestConsent');
+const requestConsent = remoteFunction('requestConsent') as (args: RequestConsentParams) => Promise<void>;
 
 exposeToPage({
   'navigator.dataProtectionControl.request': request,

@@ -61,13 +61,11 @@ async function showPageActionButton(tabId: number) {
 }
 
 export async function showPopin(tabId: number) {
-  const showPopinRpc = remoteFunction('showPopin', { tabId });
-  await showPopinRpc();
+  await remoteFunction('showPopin', { tabId })();
 }
 
 export async function hidePopin(tabId: number) {
-  const hidePopinRpc = remoteFunction('hidePopin', { tabId });
-  await hidePopinRpc();
+  await remoteFunction('hidePopin', { tabId })();
 }
 
 // Enable the pop-in to close itself (tabId is read from the calling tab), and

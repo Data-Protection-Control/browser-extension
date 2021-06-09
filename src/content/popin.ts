@@ -36,11 +36,17 @@ export async function showPopin() {
   });
 }
 
-export async function hidePopin() {
+/**
+ * @returns True if there was a pop-in.
+ */
+export async function hidePopin(): Promise<boolean> {
   const container = getPopinElement();
   if (container && container.style.opacity !== '0') {
     container.style.opacity = '0';
     setTimeout(() => container.remove(), fadeOutDuration);
+    return true;
+  } else {
+    return false;
   }
 }
 
