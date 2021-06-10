@@ -44,7 +44,6 @@
     "postcss": "^8.2.4",
     "svelte": "^3.31.2",
     "sveltestrap": "^5.1.1",
-    "tailwindcss": "^2.0.2",
     "webextension-rpc": "^0.1.0"
   }
 }
