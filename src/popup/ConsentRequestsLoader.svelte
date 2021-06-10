@@ -18,9 +18,9 @@
 </script>
 
 {#if $maybeStorageData && $storageData.consentRequestsList.length > 0}
-  <ConsentRequests {...{storageData}} />
+  <slot {storageData} />
 {:else}
-  <section class="p-2">
+  <section class="container">
     <p>
       This page does not include any requests for consent for personal data processing.
     </p>

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Button, ButtonGroup, ListGroup, ListGroupItem } from 'sveltestrap';
+  import { Button, ButtonGroup } from 'sveltestrap';
   import type { Writable } from "svelte/store";
   import type { StorageData } from "../common/consent-request-management";
-  import type { ConsentRequest } from '../types';
+  import ConsentRequestsListContent from './ConsentRequestsListContent.svelte';
 
   export let storageData: Writable<StorageData>;
 
@@ -23,10 +23,6 @@
       $storageData.consentResponses[element.id] = false;
     });
   };
-
-  function isUnanswered(consentRequest: ConsentRequest) {
-    return $storageData.consentResponses[consentRequest.id] === undefined;
-  }
 </script>
 
 <section class="container">
@@ -34,23 +30,7 @@
 </section>
 <section bind:this={listElement}>
   <div style="max-height: 250px; overflow-y: auto;" tabindex={0} class="border-top border-bottom">
-    <ListGroup>
-      {#each $storageData.consentRequestsList as consentRequest (consentRequest.id)}
-        <ListGroupItem
-          id={consentRequest.id}
-          class="consent-request-item {isUnanswered(consentRequest) ? 'bg-white' : 'bg-transparent'}"
-        >
-          <div class="form-check form-switch m-1 float-end" style="transform: scale(1.2);">
-            <input
-            class="form-check-input"
-            type="checkbox"
-            bind:checked={$storageData.consentResponses[consentRequest.id]}
-            />
-          </div>
-          <q>{consentRequest.text}</q>
-        </ListGroupItem>
-      {/each}
-    </ListGroup>
+    <ConsentRequestsListContent storageData={storageData} />
   </div>
 </section>
 {#if $storageData.consentRequestsList.length > 1}

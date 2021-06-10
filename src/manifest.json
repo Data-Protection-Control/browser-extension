@@ -16,6 +16,9 @@
       "run_at": "document_start"
     }
   ],
+  "options_ui": {
+    "page": "options/index.html"
+  },
   "page_action": {
     "default_popup": "popup/index.html",
     "browser_style": true,

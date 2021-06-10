@@ -56,6 +56,14 @@ export async function markConsentRequestsAsAnswered(webPageOrigin: string) {
   await setStorageDataForOrigin(webPageOrigin, storageData);
 }
 
+export async function setAllResponsesForWebsite(webPageOrigin: string, consent: boolean) {
+  const storageData = await getStorageDataForOrigin(webPageOrigin);
+  for (const consentRequest of storageData.consentRequestsList) {
+      storageData.consentResponses[consentRequest.id] = consent;
+  }
+  await setStorageDataForOrigin(webPageOrigin, storageData);
+}
+
 export async function hasStorageDataForOrigin(webPageOrigin: string): Promise<boolean> {
   const key = `data:${webPageOrigin}`;
   const storedData = (await browser.storage.sync.get(key))[key] as Partial<StorageData> | undefined;
@@ -118,4 +126,24 @@ export function listenToStorageChanges(
       });
     }
   );
+}
+
+export async function getAllOrigins() {
+  const storageContents = await browser.storage.sync.get();
+  const allOrigins = Object.keys(storageContents)
+    .filter(key => key.startsWith('data:'))
+    .map(key => key.slice('data:'.length));
+  return allOrigins;
+}
+
+export async function setAllResponsesForAllWebsites(consent: boolean) {
+  for (const origin of await getAllOrigins()) {
+    await setAllResponsesForWebsite(origin, consent);
+  }
+}
+
+export async function forgetAllWebsites() {
+  for (const origin of await getAllOrigins()) {
+    await browser.storage.sync.remove(`data:${origin}`);
+  }
 }
