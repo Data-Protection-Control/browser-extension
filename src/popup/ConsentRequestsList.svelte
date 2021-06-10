@@ -6,6 +6,9 @@
 
   export let storageData: Writable<StorageData>;
 
+  let zeroRequests: boolean;
+  $: zeroRequests = $storageData.consentRequestsList.length === 0;
+
   let listElement: Element;
 
   function getVisibleConsentRequests() {
@@ -23,19 +26,18 @@
       $storageData.consentResponses[element.id] = false;
     });
   };
+
 </script>
 
-<section class="container">
-  <p>This website asks your consent for the following:</p>
+<section class="container clearfix">
+  <ButtonGroup class="float-end ms-2 mt-2 mb-1">
+    <Button on:click={rejectAll} disabled={zeroRequests} outline size="sm" color="primary" class="flex-grow-0">Reject all</Button>
+    <Button on:click={acceptAll} disabled={zeroRequests} outline size="sm" color="primary" class="flex-grow-0">Accept all</Button>
+  </ButtonGroup>
+  <slot/>
 </section>
-<section bind:this={listElement}>
-  <div style="max-height: 250px; overflow-y: auto;" tabindex={0} class="border-top border-bottom">
+<section bind:this={listElement} class="container flex-grow-1 d-flex flex-column">
+  <div style="height: 200px; overflow-y: auto;" tabindex={0} class="border-top border-bottom flex-grow-1">
     <ConsentRequestsListContent storageData={storageData} />
   </div>
 </section>
-{#if $storageData.consentRequestsList.length > 1}
-  <ButtonGroup class="d-flex justify-content-end m-1">
-    <Button on:click={rejectAll} outline size="sm" color="primary" class="flex-grow-0">Reject all</Button>
-    <Button on:click={acceptAll} outline size="sm" color="primary" class="flex-grow-0">Accept all</Button>
-  </ButtonGroup>
-{/if}

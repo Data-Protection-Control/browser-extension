@@ -5,7 +5,6 @@
   import type { StorageData } from '../common/consent-request-management';
   import { makeStorageData } from '../common/consent-request-management';
   import { storageEntry } from '../store';
-  import ConsentRequests from './ConsentRequests.svelte';
 
   const maybeStorageData: Writable<StorageData | undefined> = storageEntry(
     'sync',
@@ -17,12 +16,8 @@
   const storageData = maybeStorageData as Writable<StorageData>;
 </script>
 
-{#if $maybeStorageData && $storageData.consentRequestsList.length > 0}
+{#if $maybeStorageData}
   <slot {storageData} />
 {:else}
-  <section class="container">
-    <p>
-      This page does not include any requests for consent for personal data processing.
-    </p>
-  </section>
+  <i>Could not access this browser’s local storage.</i>
 {/if}

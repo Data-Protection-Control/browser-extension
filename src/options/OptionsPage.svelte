@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button, ButtonGroup, ListGroup, ListGroupItem } from "sveltestrap";
   import { setAllResponsesForAllWebsites, forgetAllWebsites, getAllOrigins } from "../common/consent-request-management";
-  import ConsentRequestsListContent from "../popup/ConsentRequestsListContent.svelte";
+  import ConsentRequestsList from "../popup/ConsentRequestsList.svelte";
   import ConsentRequestsLoader from "../popup/ConsentRequestsLoader.svelte";
 
   let allOriginsP = getAllOrigins();
@@ -30,10 +30,11 @@
     <section>
       <ListGroup>
         {#each allOrigins as origin}
-          <ListGroupItem>
-            <h4>{origin}</h4>
+          <ListGroupItem class="p-4">
             <ConsentRequestsLoader webPageOrigin={origin} let:storageData>
-              <ConsentRequestsListContent {storageData}/>
+              <ConsentRequestsList {storageData}>
+                <b class="fs-5">{origin}</b>
+              </ConsentRequestsList>
             </ConsentRequestsLoader>
           </ListGroupItem>
         {:else}
@@ -53,7 +54,7 @@
         Withdraw all your consent
       </Button>
       <Button on:click={e => areYouSure(e, () => setAllResponsesForAllWebsites(true))} outline color="primary">
-        Consent to all requests
+        Consent to all these requests
       </Button>
     </ButtonGroup>
   </section>

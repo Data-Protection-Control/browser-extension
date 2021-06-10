@@ -47,6 +47,7 @@ export async function hasUnansweredConsentRequests(webPageOrigin: string) {
 }
 
 export async function markConsentRequestsAsAnswered(webPageOrigin: string) {
+  if (!await hasStorageDataForOrigin(webPageOrigin)) return;
   const storageData = await getStorageDataForOrigin(webPageOrigin);
   for (const consentRequest of storageData.consentRequestsList) {
     if (storageData.consentResponses[consentRequest.id] === undefined) {
