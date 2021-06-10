@@ -5,26 +5,8 @@
   export let webPageOrigin: string | undefined;
 </script>
 
-<style>
-  button#close {
-    float: right;
-    font-size: 30px;
-    line-height: 15px;
-    opacity: 0.5;
-    border-radius: 15px;
-    margin: 4px;
-    padding: 4px;
-  }
-
-  button:hover, button:focus {
-    background: #ccc8;
-    opacity: 1;
-    outline: none;
-  }
-</style>
-
-<main>
-  <button id="close" on:click={close}>×</button>
+<main class="mt-2 mb-2">
+  <button id="close" class="btn-close small mx-2 mb-2 float-end" aria-label="Close" on:click={close}></button>
   {#if webPageOrigin}
     <ConsentRequestsLoader webPageOrigin={webPageOrigin} />
   {:else}
