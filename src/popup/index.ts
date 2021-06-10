@@ -1,5 +1,6 @@
 import Popup from "./Popup.svelte";
 import "./tailwind.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 // @ts-ignore
 import { remoteFunction } from 'webextension-rpc';
 import { markConsentRequestsAsAnswered } from "../common/consent-request-management";
