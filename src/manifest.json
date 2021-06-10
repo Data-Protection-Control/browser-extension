@@ -17,7 +17,7 @@
     }
   ],
   "options_ui": {
-    "page": "options/index.html"
+    "page": "options/open-options-in-new-tab.html"
   },
   "page_action": {
     "default_popup": "popup/index.html",
@@ -38,6 +38,7 @@
     "<all_urls>"
   ],
   "web_accessible_resources": [
+    "/options/index.html",
     "/popup/*"
   ]
 }

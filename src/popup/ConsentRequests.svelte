@@ -39,6 +39,3 @@
     <Button on:click={acceptAll} outline size="sm" color="primary" class="flex-grow-0">Accept all</Button>
   </ButtonGroup>
 {/if}
-<section class="container mt-2">
-  <p>You can change your responses at any time.</p>
-</section>

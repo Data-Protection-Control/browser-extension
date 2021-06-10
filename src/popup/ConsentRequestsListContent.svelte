@@ -21,6 +21,10 @@
         <input
           class="form-check-input"
           type="checkbox"
+          title={$storageData.consentResponses[consentRequest.id]
+            ? 'Click to withdraw your consent'
+            : 'Click to give your consent'
+          }
           bind:checked={$storageData.consentResponses[consentRequest.id]}
         />
       </div>

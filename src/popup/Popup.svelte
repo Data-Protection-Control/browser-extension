@@ -13,16 +13,18 @@
   }
 </script>
 
-<main class="mt-2 mb-2">
-  <button id="close" class="btn-close small mx-2 mb-2 float-end" aria-label="Close" on:click={close}></button>
-  {#if webPageOrigin}
-    <ConsentRequestsLoader webPageOrigin={webPageOrigin} let:storageData>
-      <ConsentRequests {storageData}/>
-    </ConsentRequestsLoader>
-  {:else}
-    <i>This page cannot request consent.</i>
-  {/if}
+<main class="mt-2 mb-2 flex-grow-1 d-flex flex-column">
+  <div class="flex-grow-1">
+    <button on:click={close} class="btn-close small mx-2 mb-2 float-end" aria-label="Close"></button>
+    {#if webPageOrigin}
+      <ConsentRequestsLoader webPageOrigin={webPageOrigin} let:storageData>
+        <ConsentRequests {storageData}/>
+      </ConsentRequestsLoader>
+    {:else}
+      <i>This page cannot request consent.</i>
+    {/if}
+  </div>
   <section class="container">
-    <Button id="options" on:click={openOptionsPage}>Data protection control centre…</Button>
+    <Button on:click={openOptionsPage}>⚙️ Open your data protection control centre</Button>
   </section>
 </main>

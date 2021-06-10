@@ -5,11 +5,22 @@
   import ConsentRequestsLoader from "../popup/ConsentRequestsLoader.svelte";
 
   let allOriginsP = getAllOrigins();
+
+  async function forgetAll() {
+    await forgetAllWebsites();
+    allOriginsP = getAllOrigins();
+  }
+
+  async function areYouSure(event: MouseEvent, callback: () => void) {
+    const buttonText = (event.target as HTMLElement).textContent;
+    const sure = confirm(`${buttonText}, for all websites?`);
+    if (sure) callback();
+  }
 </script>
 
-<main class="my-4 mx-auto" style="max-width: 40em;">
-  <h1 class="mb-4">Data Protection Control Centre</h1>
-  <h2>Your data control decisions for all websites</h2>
+<main class="container my-4 mx-auto" style="max-width: 40em;">
+  <h2 class="mb-4">Data Protection Control Centre</h2>
+  <h3>Your data control decisions for all websites</h3>
   <p>
     Here you can review the consent requests, and modify your responses, for all websites you visited.
   </p>
@@ -20,7 +31,7 @@
       <ListGroup>
         {#each allOrigins as origin}
           <ListGroupItem>
-            <h3 class="fs-4">{origin}</h3>
+            <h4>{origin}</h4>
             <ConsentRequestsLoader webPageOrigin={origin} let:storageData>
               <ConsentRequestsListContent {storageData}/>
             </ConsentRequestsLoader>
@@ -35,9 +46,15 @@
   {/await}
   <section class="container m-2 d-flex justify-content-end">
     <ButtonGroup>
-      <Button on:click={() => setAllResponsesForAllWebsites(false)} outline color="primary">Reject all requests</Button>
-      <Button on:click={() => setAllResponsesForAllWebsites(true)} outline color="primary">Accept all requests</Button>
-      <Button on:click={() => forgetAllWebsites()} outline color="primary">Forget about all requests & responses</Button>
+      <Button on:click={e => areYouSure(e, forgetAll)} outline color="danger">
+        Forget about all requests & responses
+      </Button>
+      <Button on:click={e => areYouSure(e, () => setAllResponsesForAllWebsites(false))} outline color="primary">
+        Withdraw all your consent
+      </Button>
+      <Button on:click={e => areYouSure(e, () => setAllResponsesForAllWebsites(true))} outline color="primary">
+        Consent to all requests
+      </Button>
     </ButtonGroup>
   </section>
   <section class="mt-5 text-muted">
