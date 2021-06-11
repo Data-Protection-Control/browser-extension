@@ -7588,6 +7588,18 @@ timsort@^0.3.0:
   resolved "https://registry.yarnpkg.com/timsort/-/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
+tldts-core@^5.7.38:
+  version "5.7.38"
+  resolved "https://registry.yarnpkg.com/tldts-core/-/tldts-core-5.7.38.tgz#779092c90941803fb682c3d7094a88f12aad4508"
+  integrity sha512-mcL16YTXjpVJ+ekoKC/ddvdjGNMg8HkdWQNp3WNz26WJMV7Z2Hjr1IPwYYr9W3LxGdXV7mmg21Zk2vSstiSsFg==
+
+tldts@^5.7.38:
+  version "5.7.38"
+  resolved "https://registry.yarnpkg.com/tldts/-/tldts-5.7.38.tgz#ca23b9bfa7e2af9ffeddcedab45a564b0a63bbd5"
+  integrity sha512-Ji+xTLv8TAWq2y7/+RCC/OpWO7ExpgsZyijA27Q2uHElyaMrNhgjcZVbgvpwX0Imgk5w8jnJqRDLrmeIefma2Q==
+  dependencies:
+    tldts-core "^5.7.38"
+
 tmp@0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.2.1.tgz#8457fc3037dcf4719c251367a1af6500ee1ccf14"

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from 'sveltestrap';
+  import { getDomain } from 'tldts';
   import ConsentRequestsLoader from "./ConsentRequestsLoader.svelte";
   import ConsentRequestsList from "./ConsentRequestsList.svelte";
 
@@ -18,7 +19,7 @@
   {#if webPageOrigin}
     <ConsentRequestsLoader webPageOrigin={webPageOrigin} let:storageData>
       <ConsentRequestsList {storageData}>
-        <p>This website asks your consent for the following:</p>
+        <p>{getDomain(webPageOrigin ?? '') ?? 'This website'} asks your consent for the following:</p>
       </ConsentRequestsList>
     </ConsentRequestsLoader>
   {:else}
