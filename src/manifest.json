@@ -30,6 +30,7 @@
     "default_title": "Data Protection Control"
   },
   "permissions": [
+    "history",
     "notifications",
     "storage",
     "tabs",

@@ -15,6 +15,7 @@ import {
   clearConsentRequestsList,
 } from '../common/consent-request-management';
 import type { ConsentRequestsList } from '../types';
+import { isAllowedToInterrupt } from '../common/user-preferences';
 
 export async function requestConsent({
   consentRequestsList,
@@ -31,7 +32,8 @@ export async function requestConsent({
   await updatePageActionButton(tabId, webPageOrigin);
 
   if (await hasUnansweredConsentRequests(webPageOrigin)) {
-    await showPopin(tabId);
+    if (await isAllowedToInterrupt(webPageOrigin, consentRequestsList))
+      await showPopin(tabId);
   }
 }
 
