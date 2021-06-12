@@ -1,4 +1,7 @@
 {
+  "name": "ADPC prototype",
+  "version": "0.0.1",
+  "description": "Demonstrates the Advanced Data Protection Control mechanism",
   "background": {
     "scripts": [
       "background/index.ts"
@@ -16,6 +19,13 @@
       "run_at": "document_start"
     }
   ],
+  "icons": {
+    "16": "icon/16.png",
+    "19": "icon/19.png",
+    "38": "icon/38.png",
+    "48": "icon/48.png",
+    "128": "icon/128.png"
+  },
   "options_ui": {
     "page": "options/open-options-in-new-tab.html"
   },
@@ -23,8 +33,10 @@
     "default_popup": "popup/index.html",
     "browser_style": true,
     "default_icon": {
+        "16": "icon/16.png",
         "19": "icon/19.png",
         "38": "icon/38.png",
+        "48": "icon/48.png",
         "128": "icon/128.png"
     },
     "default_title": "Data Protection Control"
