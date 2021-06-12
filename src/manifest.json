@@ -7,6 +7,12 @@
       "background/index.ts"
     ]
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "prototype-extension@dataprotectioncontrol.org",
+      "strict_min_version": "89.0"
+    }
+  },
   "content_scripts": [
     {
       "js": [
