@@ -1,9 +1,6 @@
-// @ts-ignore
-import iconNewRequests from '../icon/red-16.png';
-// @ts-ignore
-import iconKnownRequests from '../icon/darkred-16.png';
-// @ts-ignore
-import iconNoRequests from '../icon/grey-16.png';
+const iconNewRequests = '/icon/red-16.png';
+const iconKnownRequests = '/icon/darkred-16.png';
+const iconNoRequests = '/icon/grey-16.png';
 
 // @ts-ignore
 import { remoteFunction } from 'webextension-rpc';

@@ -1,22 +1,22 @@
 {
+  "manifest_version": 2,
   "name": "ADPC prototype",
   "version": "0.0.1",
   "description": "Demonstrates the Advanced Data Protection Control mechanism",
   "background": {
     "scripts": [
-      "background/index.ts"
+      "background/index.js"
     ]
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "prototype-extension@dataprotectioncontrol.org",
-      "strict_min_version": "89.0"
+      "id": "prototype-extension@dataprotectioncontrol.org"
     }
   },
   "content_scripts": [
     {
       "js": [
-        "content/index.ts"
+        "content/index.js"
       ],
       "matches": [
         "https://*/*",
@@ -37,7 +37,6 @@
   },
   "page_action": {
     "default_popup": "popup/index.html",
-    "browser_style": true,
     "default_icon": {
         "16": "icon/16.png",
         "19": "icon/19.png",
@@ -49,7 +48,6 @@
   },
   "permissions": [
     "history",
-    "notifications",
     "storage",
     "tabs",
     "webRequest",

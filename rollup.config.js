@@ -6,25 +6,19 @@ import postcss from "rollup-plugin-postcss";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
-import {
-  chromeExtension,
-  simpleReloader,
-} from "rollup-plugin-chrome-extension";
-import { emptyDir } from "rollup-plugin-empty-dir";
 import url from '@rollup/plugin-url';
 
-const production = !process.env.ROLLUP_WATCH;
+// const production = !process.env.ROLLUP_WATCH;
+const production = false;
 
-export default {
-  input: "src/manifest.json",
-  output: {
-    dir: "dist",
-    format: "esm",
-  },
+const commonConfig = {
+  // output: {
+  //   dir: "dist",
+  //   format: "esm",
+  //   preserveModules: true,
+  //   preserveModulesRoot: 'src'
+  // },
   plugins: [
-    // always put chromeExtension() before other plugins
-    chromeExtension({ browserPolyfill: true }),
-    simpleReloader(),
     svelte({
       preprocess: sveltePreprocess(),
       compilerOptions: {
@@ -32,7 +26,7 @@ export default {
         dev: !production,
       },
     }),
-    postcss({ minimize: production }),
+    postcss({ extract: true, minimize: production }),
     // the plugins below are optional
     resolve({
       dedupe: ["svelte"],
@@ -40,8 +34,6 @@ export default {
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     commonjs(),
     typescript({ sourceMap: false }),
-    // Empties the output dir before a new build
-    emptyDir(),
     url({ limit: 0, fileName: 'assets/[name][extname]', publicPath: '/' }),
     // If we're building for production, minify
     production && terser(),
@@ -49,3 +41,38 @@ export default {
     production && zip({ dir: "releases" }),
   ],
 };
+
+export default [
+{
+  input: ['src/background/index.ts'],
+  output: {
+    file: "dist/background/index.js",
+    format: "esm",
+  },
+  ...commonConfig,
+},
+{
+  input: ['src/content/index.ts'],
+  output: {
+    file: "dist/content/index.js",
+    format: "esm",
+  },
+  ...commonConfig,
+},
+{
+  input: ['src/popup/index.ts'],
+  output: {
+    file: "dist/popup/index.js",
+    format: "esm",
+  },
+  ...commonConfig,
+},
+{
+  input: ['src/options/index.ts'],
+  output: {
+    file: "dist/options/index.js",
+    format: "esm",
+  },
+  ...commonConfig,
+},
+];
