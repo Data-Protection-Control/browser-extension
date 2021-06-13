@@ -44,6 +44,12 @@ const commonConfig = {
 
 export default [
 {
+  input: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
+  output: {
+    file: 'dist/browser-polyfill.js',
+  }
+},
+{
   input: ['src/background/index.ts'],
   output: {
     file: "dist/background/index.js",

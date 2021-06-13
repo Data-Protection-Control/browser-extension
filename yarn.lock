@@ -5630,6 +5630,11 @@ web-ext@^6.0.0:
     yargs "16.2.0"
     zip-dir "2.0.0"
 
+webextension-polyfill@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/webextension-polyfill/-/webextension-polyfill-0.8.0.tgz#f80e9f4b7f81820c420abd6ffbebfa838c60e041"
+  integrity sha512-a19+DzlT6Kp9/UI+mF9XQopeZ+n2ussjhxHJ4/pmIGge9ijCDz7Gn93mNnjpZAk95T4Tae8iHZ6sSf869txqiQ==
+
 webextension-rpc@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/webextension-rpc/-/webextension-rpc-0.1.0.tgz#6c40db58f5ed2eb661fa6c5ccbb7dea227fba9f6"

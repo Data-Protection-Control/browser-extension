@@ -5,6 +5,7 @@
   "description": "Demonstrates the Advanced Data Protection Control mechanism",
   "background": {
     "scripts": [
+      "browser-polyfill.js",
       "background/index.js"
     ]
   },
@@ -16,6 +17,7 @@
   "content_scripts": [
     {
       "js": [
+        "browser-polyfill.js",
         "content/index.js"
       ],
       "matches": [

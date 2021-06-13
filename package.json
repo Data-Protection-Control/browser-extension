@@ -38,6 +38,7 @@
     "svelte": "^3.31.2",
     "sveltestrap": "^5.1.1",
     "tldts": "^5.7.38",
+    "webextension-polyfill": "^0.8.0",
     "webextension-rpc": "^0.1.0"
   }
 }
