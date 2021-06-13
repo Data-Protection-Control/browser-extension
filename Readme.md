@@ -1,6 +1,6 @@
 # ADPC prototype browser extension
 
-This is a proof-of-concept implementation of the [Advanced Data Protection Control] (ADPC) [1] mechanism, in the form of a browser extension. See the website, [dataprotectioncontrol.org][1], for more information.
+This is a proof-of-concept implementation of the [Advanced Data Protection Control] [1] (ADPC) mechanism, in the form of a browser extension. See the website, [dataprotectioncontrol.org][1], for more information.
 
 [1]: https://www.dataprotectioncontrol.org/
 
