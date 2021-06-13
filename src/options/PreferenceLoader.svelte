@@ -2,7 +2,7 @@
   import type { Writable } from 'svelte/store';
   import { makeUserPreferences } from '../common/user-preferences';
   import type { UserPreferences } from '../common/user-preferences';
-  import { storageEntry } from '../store';
+  import { storageEntry } from '../common/svelte-browser-storage';
 
   const maybeUserPreferences: Writable<UserPreferences | undefined> = storageEntry(
     'sync',

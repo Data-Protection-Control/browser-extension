@@ -4,7 +4,7 @@
   import type { Writable } from 'svelte/store';
   import type { StorageData } from '../common/consent-request-management';
   import { makeStorageData } from '../common/consent-request-management';
-  import { storageEntry } from '../store';
+  import { storageEntry } from '../common/svelte-browser-storage';
 
   const maybeStorageData: Writable<StorageData | undefined> = storageEntry(
     'sync',
