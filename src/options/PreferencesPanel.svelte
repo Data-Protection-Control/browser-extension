@@ -23,6 +23,7 @@
   </div> -->
   <ListGroupItem>
     <label>
+      Show a pop-up after you visited a website
       <input
         type="number"
         min="1"
@@ -36,7 +37,7 @@
         <option value="5"/>
         <option value="10"/>
       </datalist>
-      Let websites interrupt you with consent requests only after you visited this many of its pages.
+      time(s).
     </label>
   </ListGroupItem>
 </ListGroup>
