@@ -13,7 +13,7 @@ export async function showPopin() {
   container.style.width = '400px';
   container.style.maxHeight = '95vh';
   container.style.maxWidth = 'calc(100vw - 2 * 20px)';
-  container.style.position = 'absolute';
+  container.style.position = 'fixed';
   container.style.top = '0';
   container.style.right = '0';
   container.style.margin = '2px 20px';
