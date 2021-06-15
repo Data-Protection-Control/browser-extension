@@ -7,7 +7,7 @@ This is a proof-of-concept implementation of the [Advanced Data Protection Contr
 
 ## Try this extension
 
-See <https://dataprotectioncontrol.org/prototype> for instructions to get it and try it out.
+See <https://www.dataprotectioncontrol.org/prototype> for instructions to get it and try it out.
 
 
 ## Developing this extension

@@ -84,6 +84,13 @@
     {/await}
   </section>
   <section class="mt-5 text-muted">
-    <a class="text-muted" target="_blank" href="https://dataprotectioncontrol.org/">More information about the Advanced Data Protection Control system</a>
+    <p>
+      <a class="text-muted" target="_blank" href="https://www.dataprotectioncontrol.org/">
+        More information about the Advanced Data Protection Control system
+      </a>
+    </p>
+    <p>
+      Please note that this software is only a basic proof-of-concept, and does not attempt to show all the possibilities of ADPC.
+    </p>
   </section>
 </main>
