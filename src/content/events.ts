@@ -1,6 +1,6 @@
 import deepEqual from 'fast-deep-equal';
 import { listenToStorageChanges, storageDataToUserDecisions } from "../common/consent-request-management";
-import { executePageScript } from "./execute-page-script";
+import { executePageScript, maybeClone } from "./execute-page-script";
 
 // Dispatch ADPC events in the page script’s context.
 
@@ -45,7 +45,7 @@ listenToStorageChanges((webPageOrigin, newStorageData, oldStorageData) => {
 
   const proxyEvent = new CustomEvent(
     proxyEventName,
-    { detail: eventAttributes },
+    maybeClone({ detail: eventAttributes }),
   );
   document.dispatchEvent(proxyEvent);
 });

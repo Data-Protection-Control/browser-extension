@@ -13,9 +13,12 @@
  *     exposeToPage({
  *       'window.brewTea': async function brewTea(cups) { return `${cups} cups of tea!` }
  *     })
+ *
+ * More info, for Chromium: https://developer.chrome.com/docs/extensions/mv2/content_scripts/#host-page-communication
+ * For Firefox, a simpler approach should also work, using exportFunction(): https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts#exportfunction
  */
 
-import { executePageScript } from "./execute-page-script";
+import { executePageScript, maybeClone } from "./execute-page-script";
 
 interface RpcInvocationMessage {
   funcName: string;
@@ -52,7 +55,7 @@ export function exposeToPage(functions: ListOfFunctions) {
     function sendResponse(responseMessage: RpcResponseMessage) {
       document.dispatchEvent(new CustomEvent(
         rpcResponseEventName,
-        { detail: responseMessage },
+        maybeClone({ detail: responseMessage }),
       ));
     }
 
