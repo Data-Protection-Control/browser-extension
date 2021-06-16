@@ -1,23 +1,14 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import svelte from "rollup-plugin-svelte";
-import zip from "rollup-plugin-zip";
 import postcss from "rollup-plugin-postcss";
-import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import url from '@rollup/plugin-url';
 
-// const production = !process.env.ROLLUP_WATCH;
-const production = false;
+const production = !process.env.ROLLUP_WATCH;
 
 const commonConfig = {
-  // output: {
-  //   dir: "dist",
-  //   format: "esm",
-  //   preserveModules: true,
-  //   preserveModulesRoot: 'src'
-  // },
   plugins: [
     svelte({
       preprocess: sveltePreprocess(),
@@ -35,10 +26,6 @@ const commonConfig = {
     commonjs(),
     typescript({ sourceMap: false }),
     url({ limit: 0, fileName: 'assets/[name][extname]', publicPath: '/' }),
-    // If we're building for production, minify
-    production && terser(),
-    // Outputs a zip file in ./releases
-    production && zip({ dir: "releases" }),
   ],
 };
 

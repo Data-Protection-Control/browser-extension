@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ADPC prototype",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Demonstrates the Advanced Data Protection Control mechanism",
   "background": {
     "scripts": [
