@@ -13,22 +13,23 @@ const proxyEventName = `__ADPC_PROXY_EVENT__${randomString}`;
 const pageScriptContent = `
   if (globalThis.window.navigator.dataProtectionControl === undefined) {
     globalThis.window.navigator.dataProtectionControl = new EventTarget();
-  }
 
-  class AdpcEvent extends Event {
-    constructor(typeArg, attributes) {
-      super(typeArg);
-      Object.assign(this, attributes);
+    class AdpcEvent extends Event {
+      constructor(typeArg, attributes) {
+        super(typeArg);
+        Object.assign(this, attributes);
+      }
     }
-  }
+    globalThis.AdpcEvent = AdpcEvent;
 
-  document.addEventListener('${proxyEventName}', (proxyEvent) => {
-    const adpcEvent = new AdpcEvent(
-      'decisionchange',
-      proxyEvent.detail,
-    );
-    globalThis.window.navigator.dataProtectionControl.dispatchEvent(adpcEvent);
-  })
+    document.addEventListener('${proxyEventName}', (proxyEvent) => {
+      const adpcEvent = new AdpcEvent(
+        'decisionchange',
+        proxyEvent.detail,
+      );
+      globalThis.window.navigator.dataProtectionControl.dispatchEvent(adpcEvent);
+    })
+  }
 `;
 executePageScript(pageScriptContent);
 
